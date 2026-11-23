@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>想い出アンケート｜森高16年卒</title>
+<style>
+:root{--navy:#1f3a5f;--navy2:#2d5486;--paper:#f6f3ec;--ink:#22252b;--muted:#6b7280;--ng:#c0473b;--line:#ddd6c8;--gold:#b8862b}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:"Hiragino Sans","Meiryo UI","Yu Gothic",sans-serif}
+.wrap{max-width:520px;margin:0 auto;padding:20px 16px 48px}
+header{text-align:center;margin:8px 0 18px}
+.badge{display:inline-block;font-size:12px;letter-spacing:.2em;color:var(--navy2);border:1px solid var(--navy2);border-radius:99px;padding:3px 12px}
+h1{font-size:22px;margin:10px 0 4px;color:var(--navy)}
+.sub{color:var(--muted);font-size:13px;line-height:1.6}
+.card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:18px;margin-bottom:14px;box-shadow:0 2px 10px rgba(31,58,95,.06)}
+.q{font-weight:700;font-size:16px;margin-bottom:8px;color:var(--navy)}
+.q .opt{font-weight:400;font-size:12px;color:var(--muted);margin-left:6px}
+.q .req{font-weight:700;font-size:11px;color:#fff;background:var(--ng);border-radius:4px;padding:1px 6px;margin-left:6px}
+input[type=text],input[type=password],select,textarea{width:100%;font:inherit;font-size:16px;padding:11px 12px;border:1px solid var(--line);border-radius:10px;background:#fff}
+textarea{min-height:84px;resize:vertical}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chips label{border:1.5px solid var(--line);border-radius:99px;padding:8px 13px;font-size:15px;cursor:pointer;user-select:none}
+.chips input{display:none}
+.chips label:has(input:checked){background:var(--navy2);border-color:var(--navy2);color:#fff}
+.mt{margin-top:8px}
+button{font:inherit;cursor:pointer;border:none;border-radius:12px}
+.primary{width:100%;background:var(--navy);color:#fff;font-size:17px;font-weight:700;padding:15px}
+.primary:disabled{opacity:.5}
+.err{color:var(--ng);font-size:14px;min-height:20px;margin-top:8px}
+.hidden{display:none}
+.done{text-align:center;padding:30px 18px}
+.done .big{font-size:22px;font-weight:800;color:var(--navy);margin-bottom:8px}
+footer{text-align:center;color:var(--muted);font-size:11px;margin-top:20px;line-height:1.6}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <span class="badge">森高 16年卒</span>
+  <h1>想い出アンケート</h1>
+  <div class="sub">同窓会当日に、みんなの答えを発表します。<br>答えたい質問だけで大丈夫です（3分くらい）。</div>
+</header>
+
+<section id="lock" class="card">
+  <div>同級生だけが入れるページです。パスワードを入力してください。</div>
+  <input id="pw" class="mt" type="password" autocomplete="current-password" placeholder="パスワード">
+  <button id="unlock" class="primary mt">入る</button>
+  <div id="err" class="err"></div>
+</section>
+
+<form id="form" class="hidden" onsubmit="return false">
+  <div class="card">
+    <div class="q">お名前<span class="req">必須</span></div>
+    <input type="text" id="name" maxlength="20" placeholder="例：佐々木 辰典（旧姓でもOK）">
+    <div class="q mt">組</div>
+    <div class="chips" data-name="kumi" data-type="radio"></div>
+  </div>
+
+  <div class="card">
+    <div class="q">1. 一番印象に残っている行事は？</div>
+    <div class="chips" data-name="event" data-type="radio"></div>
+    <input type="text" id="event_other" class="mt hidden" maxlength="40" placeholder="その他の行事">
+    <textarea id="event_why" class="mt" maxlength="300" placeholder="どんな思い出？（任意）"></textarea>
+  </div>
+
+  <div class="card">
+    <div class="q">2. 好きだった先生は？</div>
+    <select id="teacher"><option value="">選んでください</option></select>
+    <textarea id="teacher_why" class="mt" maxlength="300" placeholder="その先生とのエピソード（任意）"></textarea>
+  </div>
+
+  <div class="card">
+    <div class="q">3. 先生にひとことメッセージ<span class="opt">任意・当日先生にお渡しします</span></div>
+    <textarea id="teacher_msg" maxlength="300" placeholder="ありがとう、ごめんなさい、なんでも"></textarea>
+  </div>
+
+  <div class="card">
+    <div class="q">4. 部活は？<span class="opt">いくつでも</span></div>
+    <div class="chips" data-name="club" data-type="checkbox"></div>
+  </div>
+
+  <div class="card">
+    <div class="q">5. 高校時代の思い出の場所は？<span class="opt">校内でも、帰り道のお店でも</span></div>
+    <input type="text" id="place" maxlength="60" placeholder="例：駅前の○○、部室、自転車置き場">
+  </div>
+
+  <div class="card">
+    <div class="q">6. 当時ハマっていたもの<span class="opt">音楽・ドラマ・ゲームなど</span></div>
+    <input type="text" id="boom" maxlength="60">
+  </div>
+
+  <div class="card">
+    <div class="q">7. 当時のあだ名は？</div>
+    <input type="text" id="nickname" maxlength="30">
+  </div>
+
+  <div class="card">
+    <div class="q">8. 今だから言える話<span class="opt">時効ネタ大歓迎</span></div>
+    <textarea id="secret" maxlength="400"></textarea>
+  </div>
+
+  <div class="card">
+    <div class="q">9. 同窓会で会いたい人は？</div>
+    <input type="text" id="meet" maxlength="80" placeholder="同級生・先生どちらでも">
+  </div>
+
+  <div class="card">
+    <div class="q">10. 同窓会でやってほしい企画</div>
+    <div class="chips" data-name="plan" data-type="checkbox"></div>
+    <input type="text" id="plan_other" class="mt" maxlength="60" placeholder="ほかにアイデアがあれば">
+  </div>
+
+  <div class="card">
+    <div class="q">11. 回答の発表について<span class="req">必須</span></div>
+    <div class="chips" data-name="publish" data-type="radio"></div>
+  </div>
+
+  <div class="card">
+    <div class="sub">送られるのは、このページに入力した内容だけです。集計は幹事だけが見られるスプレッドシートで行います。</div>
+    <button id="send" class="primary mt">送信する</button>
+    <div id="serr" class="err"></div>
+  </div>
+</form>
+
+<section id="done" class="card done hidden">
+  <div class="big">ありがとうございました！</div>
+  <div class="sub">当日の発表をお楽しみに。<br>内容を直したいときは、もう一度送ってください（最後の回答を使います）。</div>
+</section>
+
+<footer>同級生の中だけで使ってください（URL・パスワードの外部共有はご遠慮ください）。</footer>
+</div>
+
+<script>
+const ENC={"s": "rGJT7ByQOFzhsb4/bsJDbg==", "i": "LloyUo88fV0/NXk5", "n": 250000, "c": "ZRgUW33ubuO97VfZWCJLIuPthhCI2Sb/uEs9Ha6E/BaZvGZoEKM2QNjnrY62gY2HG/hcDyYnPtqyPEcXHETCUif7wr1fF1eaLGSXbQmhxbjduhE1kqkwiGhSA1uiT2/aLGoor1glKoB5yW7CPxGbFL6hF77qHWoDE48elXsG3LiSloULXVj0oEpz7TXw1OdlRdLIoxpFE2PWyow/FGCWhiOIF6Hj8iIiaUzNzgBInk4WtV5/cgtLf1xPomub0pbFiTIZZ/m/jvYwl8sH+Iy3fEE6Ny6wp2yxLR38qgPKbY3OebwAl45wkTmZ/bKiJUhX49Wd1tbnbVfQ19z6pAxemb8n9YAHNcnUqoPxe2V+Otcwv5EcwguZ7Wa/AevtOuzhi2Y/i42cRBhMVEPM4fkSObUVXdhx8/IuZr72hOgwUfOe4/iO5LzJ8sQ4xCCPTlpyB2yVLDvTOAd265XktZ7GbfJYhjVMqLtMLgFFx0ebn+7XDQ2A+hX1XgZv1SjF14QU2ajFyPepgwlosqUdLwa2uIHMNyKgBPqC3s0YuAM9dKLQGr+oUSe9rRA+mi3R/LqUKcsmopFpC1Sola4hx85UVHYKFaHp+yup+4R1ALrrKOBRuXN3XFO0IeqGqwIdK0VEB+bc7OnVHr1rAA5Gzxhju/pv7yZWBYitejvGfJyBahxpWCc3ofT7BcrdIDYUX+h2/jH5xdmZPgbIeqSjiSlEFq9X6Eg56SaSZhJRRkZZRItNyEnPhJR/qaeulCDL7uPXK4zxjLT6IUexQQZg1muKHwkBAxh0wwffOOyWLjN+Dan/AC0J10xdMjWyU2faFzVjxp/mQoM7N8n7vWiEPTkQ8xX3FEysPnnGN7Ch5qdtKaT0Lq52uGODemwPTrzq83BlzQlsSj+RkvIzv3aGAXqQyu6DfBiFunxfdYkCqle7nL59moV06HUhKTGPjxMn5bc3wLxOxQ37GwdII0pyV0m0hpGC0rKMXG5fSDXnPtk1eKaIacJoX37qVjeExiADexpchoTte5y6PmrL4Fcp9f18IJKhQaH3BRysqylahtLT3I5L3UpMGUHAC81/Cq55LKJbBka/tA65uMSb4eL7joiBBA2ebHMAjSZW3ppFp5mINUrxXE2Uj4yiMuG8CaRaHrCHVcOhmXMBQeguIjrNdIXf2oenM45slni1e5kW1DkEk587CNygKzHt6gAYIBCB5q9wNU3l6m7LC1L0wn70i82OUUBMdPnVIePz2UB5hRF1Q6BWTRPL/uJG+/9z82DB3XkSL/a2GP4LmruV1J9U7Cx4KUZhjq1MIN62iRqaFU5fE4U8jZyVUzvkmsuBNWPlA2jQ2WYz6Z9SDwu4dZANpQG2mh6x0ElDMssDVaQfD4ElP9CuL7iQ6kkltMOwAJUtVnLq3gIcjezCWi5mA6KrwL4Ut75qgsZ7zF/Aj0UZY8kLvC7ZzdMWPiDJJLWSRynPP84gUlBE4hUzxQ4PisV7xN7jr1+c+3CPTCXQqdsbhWc++KYJDeKZTVSZcB02nYn06L3uYwzee7zu0aTr3AucRfO2WxbFLe8xoroDDiD4OqjcRwq2kJzQTQ8M6rtRgM42uHiV+R39WQYyBcd18sZKA7wZi/qHxDgHE+mpWOm42xMKYx9FJAdJduz8dgqwtXoVsvWDMBj/ibjm75Rxdm+Zv+Cj/whg6ev2TkLhAeTVOyk8OOKDe5lpG7ZzEx3sArs3Xk9awozQ+D6z7booAJeMAXRpb07EG+f0QvDwBRFDiWBjO3LXgvmNwT5vOXg6FWuLS46N0haYKwVMU6P6QmODvkim67/MVGDyT40f4pxvcXReJDsyX86vwW7E0JqL6m8plCDS/uBM+/vypHdUNSXOz1Jbo3YEMMhwXAApX6bUTu2R22xz1G0br4jCllEACuzow/ZfiYCaAQ=="};
+const $=id=>document.getElementById(id);
+const b64=s=>Uint8Array.from(atob(s),c=>c.charCodeAt(0));
+let ENDPOINT="";
+const OPTS={
+  kumi:["1組","2組","3組","4組"],
+  event:["体育祭","文化祭","修学旅行","クラスマッチ（球技大会）","遠足・登山","入学式","卒業式","部活の大会","その他"],
+  club:["野球", "ラグビー", "ホッケー", "剣道", "柔道", "陸上", "テニス", "バレーボール", "音楽", "美術", "書道", "華道", "ESS", "パソコン", "VSG", "文芸同好会", "生徒会"].concat(["帰宅部"]),
+  plan:["先生のスピーチ","卒アル写真クイズ","当時の写真スライド","近況リレートーク","集合写真","ビンゴ・景品"],
+  publish:["名前つきで発表OK","名前なしなら発表OK","発表しないでほしい"]
+};
+async function decrypt(pw){
+  const base=await crypto.subtle.importKey("raw",new TextEncoder().encode(pw),"PBKDF2",false,["deriveKey"]);
+  const key=await crypto.subtle.deriveKey({name:"PBKDF2",salt:b64(ENC.s),iterations:ENC.n,hash:"SHA-256"},base,{name:"AES-GCM",length:256},false,["decrypt"]);
+  return JSON.parse(new TextDecoder().decode(await crypto.subtle.decrypt({name:"AES-GCM",iv:b64(ENC.i)},key,b64(ENC.c))));
+}
+function build(teachers){
+  document.querySelectorAll(".chips").forEach(box=>{
+    const n=box.dataset.name,t=box.dataset.type;
+    box.innerHTML=OPTS[n].map(v=>`<label><input type="${t}" name="${n}" value="${v}">${v}</label>`).join("");
+  });
+  const sel=$("teacher");
+  teachers.forEach(g=>{const og=document.createElement("optgroup");og.label=g.subj;
+    g.names.forEach(n=>{const o=document.createElement("option");o.value=o.textContent=n;og.appendChild(o);});sel.appendChild(og);});
+  const o=document.createElement("option");o.value=o.textContent="その他・選べない";sel.appendChild(o);
+  document.querySelectorAll('input[name=event]').forEach(r=>r.onchange=()=>$("event_other").classList.toggle("hidden",r.value!=="その他"||!r.checked));
+  try{$("name").value=localStorage.getItem("player")||"";}catch(e){}
+}
+async function tryUnlock(){
+  const pw=$("pw").value; if(!pw) return;
+  $("unlock").disabled=true; $("err").textContent="確認中…";
+  try{const d=await decrypt(pw); ENDPOINT=d.endpoint; build(d.teachers);
+      $("lock").classList.add("hidden"); $("form").classList.remove("hidden");}
+  catch(e){$("err").textContent="パスワードが違います";}
+  $("unlock").disabled=false;
+}
+$("unlock").onclick=tryUnlock;
+$("pw").addEventListener("keydown",e=>{if(e.key==="Enter")tryUnlock();});
+const one=n=>(document.querySelector(`input[name=${n}]:checked`)||{}).value||"";
+const many=n=>[...document.querySelectorAll(`input[name=${n}]:checked`)].map(i=>i.value).join("、");
+const v=id=>$(id).value.trim();
+// 送信ボタンを押したときだけ送る（自動送信はしない）
+$("send").onclick=async()=>{
+  const name=v("name"), publish=one("publish");
+  if(!name){$("serr").textContent="お名前を入れてください";return;}
+  if(!publish){$("serr").textContent="11. 発表についてを選んでください";return;}
+  let ev=one("event"); if(ev==="その他") ev=v("event_other")||"その他";
+  const body={type:"survey",name,kumi:one("kumi"),event:ev,event_why:v("event_why"),
+    teacher:$("teacher").value,teacher_why:v("teacher_why"),teacher_msg:v("teacher_msg"),
+    club:many("club"),place:v("place"),boom:v("boom"),nickname:v("nickname"),secret:v("secret"),
+    meet:v("meet"),plan:[many("plan"),v("plan_other")].filter(Boolean).join("、"),publish};
+  $("send").disabled=true; $("serr").textContent="送信中…";
+  try{
+    await fetch(ENDPOINT,{method:"POST",mode:"no-cors",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(body)});
+    try{localStorage.setItem("player",name);}catch(e){}
+    $("form").classList.add("hidden"); $("done").classList.remove("hidden"); window.scrollTo(0,0);
+  }catch(e){$("serr").textContent="送れませんでした。時間をおいてもう一度どうぞ";$("send").disabled=false;}
+};
+</script>
+</body>
+</html>
