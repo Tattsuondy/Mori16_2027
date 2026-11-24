@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>声かけ名簿｜森高16年卒</title>
+<style>
+:root{--navy:#1f3a5f;--navy2:#2d5486;--paper:#f6f3ec;--ink:#22252b;--muted:#6b7280;--line:#ddd6c8;--ok:#2f8a57;--wait:#b8862b;--ng:#c0473b}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:"Hiragino Sans","Meiryo UI","Yu Gothic",sans-serif}
+.wrap{max-width:560px;margin:0 auto;padding:20px 14px 48px}
+header{text-align:center;margin:8px 0 16px}
+.badge{display:inline-block;font-size:12px;letter-spacing:.2em;color:var(--navy2);border:1px solid var(--navy2);border-radius:99px;padding:3px 12px}
+h1{font-size:22px;margin:10px 0 4px;color:var(--navy)}
+.sub{color:var(--muted);font-size:13px;line-height:1.6}
+.card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:16px;margin-bottom:12px;box-shadow:0 2px 10px rgba(31,58,95,.06)}
+input[type=password],input[type=search]{width:100%;font:inherit;font-size:16px;padding:11px 12px;border:1px solid var(--line);border-radius:10px}
+button{font:inherit;cursor:pointer;border:none;border-radius:12px}
+.primary{width:100%;background:var(--navy);color:#fff;font-size:17px;font-weight:700;padding:14px;margin-top:10px}
+.err{color:var(--ng);font-size:14px;min-height:20px;margin-top:8px}
+.hidden{display:none}
+.sum{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;text-align:center}
+.sum div{background:#f3f6fa;border-radius:10px;padding:8px 2px}
+.sum b{display:block;font-size:20px;color:var(--navy)}
+.sum span{font-size:11px;color:var(--muted)}
+.tabs,.filters{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0}
+.tabs button,.filters button{background:#fff;border:1.5px solid var(--line);padding:7px 12px;font-size:14px;border-radius:99px}
+.tabs button.on,.filters button.on{background:var(--navy2);border-color:var(--navy2);color:#fff}
+.row{display:flex;align-items:center;justify-content:space-between;padding:10px 4px;border-top:1px solid var(--line)}
+.row:first-child{border-top:none}
+.nm{font-size:17px;font-weight:700}
+.nm small{display:block;font-weight:400;font-size:12px;color:var(--muted);margin-top:2px}
+.st{font-size:12px;font-weight:700;padding:4px 10px;border-radius:99px;white-space:nowrap;color:#fff}
+.st.ok{background:var(--ok)}.st.wait{background:var(--wait)}.st.ng{background:#9ca3af}.st.lost{background:var(--ng)}
+.k{font-size:15px;font-weight:800;color:var(--navy);margin:4px 0 2px}
+.bar{height:8px;background:var(--line);border-radius:9px;overflow:hidden;margin:6px 0 2px}
+.bar i{display:block;height:100%;background:var(--ok)}
+footer{text-align:center;color:var(--muted);font-size:11px;margin-top:20px;line-height:1.6}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <span class="badge">森高 16年卒</span>
+  <h1>声かけ名簿</h1>
+  <div class="sub">まだグループにいない同級生を見つけて、<br>知っている人に声をかけてください。</div>
+</header>
+
+<section id="lock" class="card">
+  <div>同級生だけが入れるページです。パスワードを入力してください。</div>
+  <input id="pw" type="password" autocomplete="current-password" placeholder="パスワード" style="margin-top:10px">
+  <button id="unlock" class="primary">入る</button>
+  <div id="err" class="err"></div>
+</section>
+
+<section id="main" class="hidden">
+  <div class="card">
+    <div class="sum" id="sum"></div>
+    <div class="bar"><i id="barfill"></i></div>
+    <div class="sub" id="rate"></div>
+  </div>
+  <div class="card">
+    <input id="q" type="search" placeholder="名前で検索（旧姓・今の姓どちらでも）">
+    <div class="tabs" id="tabs"></div>
+    <div class="filters" id="filters"></div>
+    <div id="list"></div>
+  </div>
+  <div class="sub" style="text-align:center">連絡状況はスプレッドシートの内容です（<span id="at"></span> 時点）。<br>声をかけた人がグループに入ると「連絡済」に変わります。</div>
+</section>
+
+<footer>名前と連絡状況だけを表示しています。電話番号などは載せていません。<br>利用状況を数えるため、入室を記録しています（名前は記録しません）。<br>同級生の中だけで使ってください（URL・パスワードの外部共有はご遠慮ください）。</footer>
+</div>
+
+<script>
+const ENC={"s": "GDrpgNfqN2ajuVDqKvhmwQ==", "i": "2cXZOj/J3vowi1BZ", "n": 250000, "c": "05OlxElUwCqNtVyvX8K6Cneq2agrPLVUmqe8TfgIqjWc2VmYW2pCwfKLErzQUGJNd/RUyY0/TeHo5RGdUxiQWqC+MZo8Z1YeNTUsxfOh3e6jUkNivZYlTAk7w9sEL7eb4zbN22mrkVODGMJGMbt2e1VgxX7sEomo4hY3O/zSC0dbmDdhMrRGt5B0dsgnuOJr9Wg="};
+const $=id=>document.getElementById(id);
+const b64=s=>Uint8Array.from(atob(s),c=>c.charCodeAt(0));
+let ENDPOINT="",LIST=[],KUMI="全員",FIL="未連絡";
+let VID="";try{VID=localStorage.getItem("vid")||"";if(!VID){VID=Math.random().toString(36).slice(2,10);localStorage.setItem("vid",VID);}}catch(e){VID="nostore";}
+function track(kind){ if(!ENDPOINT) return; try{fetch(ENDPOINT,{method:"POST",mode:"no-cors",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({type:"event",page:"roster",kind,vid:VID})});}catch(e){} }
+async function decrypt(pw){
+  const base=await crypto.subtle.importKey("raw",new TextEncoder().encode(pw),"PBKDF2",false,["deriveKey"]);
+  const key=await crypto.subtle.deriveKey({name:"PBKDF2",salt:b64(ENC.s),iterations:ENC.n,hash:"SHA-256"},base,{name:"AES-GCM",length:256},false,["decrypt"]);
+  return JSON.parse(new TextDecoder().decode(await crypto.subtle.decrypt({name:"AES-GCM",iv:b64(ENC.i)},key,b64(ENC.c))));
+}
+const CLS={"連絡済":"ok","LINE招待中":"wait","未連絡":"ng","連絡先不明":"lost"};
+const LBL={"連絡済":"連絡済","LINE招待中":"招待中","未連絡":"未連絡","連絡先不明":"連絡先不明"};
+async function tryUnlock(){
+  const pw=$("pw").value; if(!pw) return;
+  $("unlock").disabled=true; $("err").textContent="確認中…";
+  try{ const d=await decrypt(pw); ENDPOINT=d.endpoint; }
+  catch(e){ $("err").textContent="パスワードが違います"; $("unlock").disabled=false; return; }
+  $("err").textContent="名簿を読み込み中…";
+  try{
+    const r=await fetch(`${ENDPOINT}?action=roster&key=${encodeURIComponent(pw)}`);
+    const j=await r.json();
+    if(!j.ok) throw new Error("closed");
+    LIST=j.list; $("at").textContent=j.at;
+    $("lock").classList.add("hidden"); $("main").classList.remove("hidden"); build(); track("入室");
+  }catch(e){ $("err").textContent="名簿を読み込めませんでした。時間をおいてもう一度どうぞ"; }
+  $("unlock").disabled=false;
+}
+$("unlock").onclick=tryUnlock;
+$("pw").addEventListener("keydown",e=>{if(e.key==="Enter")tryUnlock();});
+function chips(id,items,cur,set){
+  $(id).innerHTML=items.map(t=>`<button class="${t[0]===cur?'on':''}" data-v="${t[0]}">${t[1]}</button>`).join("");
+  $(id).querySelectorAll("button").forEach(b=>b.onclick=()=>{set(b.dataset.v);build();});
+}
+const esc=s=>s.replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+function build(){
+  const scope=LIST.filter(p=>KUMI==="全員"||p.k===KUMI);
+  const cnt=st=>scope.filter(p=>p.s===st).length;
+  const ok=cnt("連絡済");
+  $("sum").innerHTML=[["連絡済",ok],["招待中",cnt("LINE招待中")],["未連絡",cnt("未連絡")],["不明",cnt("連絡先不明")]]
+    .map(([a,b])=>`<div><b>${b}</b><span>${a}</span></div>`).join("");
+  $("barfill").style.width=(scope.length?ok/scope.length*100:0)+"%";
+  $("rate").textContent=`${KUMI==="全員"?"全体":KUMI}：${scope.length}人中 ${ok}人とつながっています（${scope.length?Math.round(ok/scope.length*100):0}%）`;
+  chips("tabs",["全員","1組","2組","3組","4組"].map(k=>[k,k]),KUMI,v=>KUMI=v);
+  chips("filters",[["未連絡","未連絡・招待中だけ"],["すべて","すべて"],["連絡済","連絡済だけ"]],FIL,v=>FIL=v);
+  const q=$("q").value.trim();
+  let rows=scope.filter(p=> FIL==="すべて"||(FIL==="連絡済"?p.s==="連絡済":p.s!=="連絡済"));
+  if(q) rows=rows.filter(p=>(p.n+p.c).replace(/\s/g,"").includes(q.replace(/\s/g,"")));
+  const ks=KUMI==="全員"?["1組","2組","3組","4組"]:[KUMI];
+  $("list").innerHTML= rows.length? ks.map(k=>{
+      const rs=rows.filter(p=>p.k===k); if(!rs.length) return "";
+      return `<div class="k">${k}（${rs.length}人）</div>`+rs.map(p=>`<div class="row"><div class="nm">${esc(p.n)}${p.c?`<small>今の姓：${esc(p.c)}</small>`:""}</div><span class="st ${CLS[p.s]||"ng"}">${LBL[p.s]||esc(p.s)}</span></div>`).join("");
+    }).join("") : `<div class="sub" style="padding:12px 0">該当する人はいません</div>`;
+}
+$("q").addEventListener("input",build);
+</script>
+</body>
+</html>
