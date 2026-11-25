@@ -33,6 +33,15 @@ button{font:inherit;cursor:pointer;border:none;border-radius:12px}
 .nm small{display:block;font-weight:400;font-size:12px;color:var(--muted);margin-top:2px}
 .st{font-size:12px;font-weight:700;padding:4px 10px;border-radius:99px;white-space:nowrap;color:#fff}
 .st.ok{background:var(--ok)}.st.wait{background:var(--wait)}.st.ng{background:#9ca3af}.st.lost{background:var(--ng)}
+.who-card .item{border-top:1px solid var(--line);padding:12px 0}
+.who-card .item:first-of-type{border-top:none}
+.ln{font-size:17px;font-weight:800}
+.cands{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
+.cands button{background:#fff;border:1.5px solid var(--line);padding:7px 11px;font-size:14px;border-radius:99px}
+.cands button.on{background:var(--navy2);border-color:var(--navy2);color:#fff}
+.other{width:100%;font:inherit;font-size:15px;padding:9px 11px;border:1px solid var(--line);border-radius:10px;margin-top:4px}
+.sendone{background:var(--wait);color:#fff;font-size:14px;font-weight:700;padding:8px 14px;margin-top:8px}
+.done{color:var(--ok);font-size:14px;font-weight:700;margin-top:8px}
 .k{font-size:15px;font-weight:800;color:var(--navy);margin:4px 0 2px}
 .bar{height:8px;background:var(--line);border-radius:9px;overflow:hidden;margin:6px 0 2px}
 .bar i{display:block;height:100%;background:var(--ok)}
@@ -60,6 +69,12 @@ footer{text-align:center;color:var(--muted);font-size:11px;margin-top:20px;line-
     <div class="bar"><i id="barfill"></i></div>
     <div class="sub" id="rate"></div>
   </div>
+  <div class="card who-card hidden" id="whocard">
+    <div class="q" style="font-weight:800;color:var(--navy);font-size:17px">この人だれ？</div>
+    <div class="sub">LINEグループにいるけれど、名簿の誰か分からない人です。知っていたら教えてください（自分のことでもOK）。幹事が確認して名簿に反映します。</div>
+    <input id="by" class="other" style="margin-top:10px" maxlength="20" placeholder="あなたの名前（任意）">
+    <div id="who"></div>
+  </div>
   <div class="card">
     <input id="q" type="search" placeholder="名前で検索（旧姓・今の姓どちらでも）">
     <div class="tabs" id="tabs"></div>
@@ -73,10 +88,10 @@ footer{text-align:center;color:var(--muted);font-size:11px;margin-top:20px;line-
 </div>
 
 <script>
-const ENC={"s": "GDrpgNfqN2ajuVDqKvhmwQ==", "i": "2cXZOj/J3vowi1BZ", "n": 250000, "c": "05OlxElUwCqNtVyvX8K6Cneq2agrPLVUmqe8TfgIqjWc2VmYW2pCwfKLErzQUGJNd/RUyY0/TeHo5RGdUxiQWqC+MZo8Z1YeNTUsxfOh3e6jUkNivZYlTAk7w9sEL7eb4zbN22mrkVODGMJGMbt2e1VgxX7sEomo4hY3O/zSC0dbmDdhMrRGt5B0dsgnuOJr9Wg="};
+const ENC={"s": "8m1yObqgfqw0phk2O/CTJw==", "i": "gs6XxivOzwVw4wdr", "n": 250000, "c": "wnlTFIQYUnrCsyJZvxnK51r3/QdWE52sLmqZXeiBfDO18BJLKLMEpDQ9A7ZPB9HlU3C3CSkP6rB8tAd3xynokR/G/VKNnMg3+RaeSXJCAEY2BzYbpscsMCOXHbIrBVMKNVUkAuQyF/lyNgPVY3U7DXuYRwe368uzcxKaRoi7Vd1pbObNI/aTXV4dvRKQQPGYuA0="};
 const $=id=>document.getElementById(id);
 const b64=s=>Uint8Array.from(atob(s),c=>c.charCodeAt(0));
-let ENDPOINT="",LIST=[],KUMI="全員",FIL="未連絡";
+let ENDPOINT="",PENDING=[],LIST=[],KUMI="全員",FIL="未連絡";
 let VID="";try{VID=localStorage.getItem("vid")||"";if(!VID){VID=Math.random().toString(36).slice(2,10);localStorage.setItem("vid",VID);}}catch(e){VID="nostore";}
 function track(kind){ if(!ENDPOINT) return; try{fetch(ENDPOINT,{method:"POST",mode:"no-cors",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({type:"event",page:"roster",kind,vid:VID})});}catch(e){} }
 async function decrypt(pw){
@@ -96,8 +111,8 @@ async function tryUnlock(){
     const r=await fetch(`${ENDPOINT}?action=roster&key=${encodeURIComponent(pw)}`);
     const j=await r.json();
     if(!j.ok) throw new Error("closed");
-    LIST=j.list; $("at").textContent=j.at;
-    $("lock").classList.add("hidden"); $("main").classList.remove("hidden"); build(); track("入室");
+    LIST=j.list; PENDING=j.pending||[]; $("at").textContent=j.at;
+    $("lock").classList.add("hidden"); $("main").classList.remove("hidden"); build(); buildWho(); track("入室");
   }catch(e){ $("err").textContent="名簿を読み込めませんでした。時間をおいてもう一度どうぞ"; }
   $("unlock").disabled=false;
 }
@@ -128,6 +143,32 @@ function build(){
     }).join("") : `<div class="sub" style="padding:12px 0">該当する人はいません</div>`;
 }
 $("q").addEventListener("input",build);
+function buildWho(){
+  if(!PENDING.length){$("whocard").classList.add("hidden");return;}
+  $("whocard").classList.remove("hidden");
+  $("who").innerHTML=PENDING.map((p,i)=>`<div class="item" data-i="${i}">
+    <div class="ln">${esc(p.line)}</div>
+    <div class="cands">${p.cands.map(c=>`<button data-v="${esc(c)}">${esc(c)}</button>`).join("")}<button data-v="__other">${p.cands.length?"どちらでもない":"名前を入力"}</button></div>
+    <input class="other hidden" maxlength="30" placeholder="例：2組 ○○ ○○">
+    <button class="sendone">この内容で送る</button><div class="err"></div></div>`).join("");
+  document.querySelectorAll("#who .item").forEach(it=>{
+    let pick="";
+    it.querySelectorAll(".cands button").forEach(b=>b.onclick=()=>{
+      it.querySelectorAll(".cands button").forEach(x=>x.classList.remove("on")); b.classList.add("on"); pick=b.dataset.v;
+      it.querySelector(".other").classList.toggle("hidden",pick!=="__other");
+    });
+    it.querySelector(".sendone").onclick=async()=>{
+      const ans= pick==="__other"? it.querySelector(".other").value.trim() : pick;
+      if(!ans){ it.querySelector(".err").textContent="選ぶか入力してください"; return; }
+      const btn=it.querySelector(".sendone"); btn.disabled=true;
+      try{
+        await fetch(ENDPOINT,{method:"POST",mode:"no-cors",headers:{"Content-Type":"text/plain;charset=utf-8"},
+          body:JSON.stringify({type:"identify",line:PENDING[it.dataset.i].line,answer:ans,by:$("by").value.trim(),vid:VID})});
+        btn.outerHTML=`<div class="done">ありがとう！幹事が確認して反映します</div>`; it.querySelector(".err").textContent="";
+      }catch(e){ it.querySelector(".err").textContent="送れませんでした。もう一度どうぞ"; btn.disabled=false; }
+    };
+  });
+}
 </script>
 </body>
 </html>
