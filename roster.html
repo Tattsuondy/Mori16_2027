@@ -59,6 +59,7 @@ footer{text-align:center;color:var(--muted);font-size:11px;margin-top:20px;line-
 <section id="lock" class="card">
   <div>同級生だけが入れるページです。パスワードを入力してください。</div>
   <input id="pw" type="password" autocomplete="current-password" placeholder="パスワード" style="margin-top:10px">
+  <div class="sub" style="margin-top:6px"><a href="policy.html" style="color:var(--navy2)">写真や名前の扱いについて</a></div>
   <button id="unlock" class="primary">入る</button>
   <div id="err" class="err"></div>
 </section>
@@ -84,11 +85,11 @@ footer{text-align:center;color:var(--muted);font-size:11px;margin-top:20px;line-
   <div class="sub" style="text-align:center">連絡状況はスプレッドシートの内容です（<span id="at"></span> 時点）。<br>声をかけた人がグループに入ると「連絡済」に変わります。</div>
 </section>
 
-<footer>名前と連絡状況だけを表示しています。電話番号などは載せていません。<br>利用状況を数えるため、入室を記録しています（名前は記録しません）。<br>同級生の中だけで使ってください（URL・パスワードの外部共有はご遠慮ください）。</footer>
+<footer><a href="policy.html" style="color:var(--navy2)">このサイトについて（個人情報の取り扱い）</a><br>名前と連絡状況だけを表示しています。電話番号などは載せていません。<br>利用状況を数えるため、入室を記録しています（名前は記録しません）。<br>同級生の中だけで使ってください（URL・パスワードの外部共有はご遠慮ください）。</footer>
 </div>
 
 <script>
-const ENC={"s": "8m1yObqgfqw0phk2O/CTJw==", "i": "gs6XxivOzwVw4wdr", "n": 250000, "c": "wnlTFIQYUnrCsyJZvxnK51r3/QdWE52sLmqZXeiBfDO18BJLKLMEpDQ9A7ZPB9HlU3C3CSkP6rB8tAd3xynokR/G/VKNnMg3+RaeSXJCAEY2BzYbpscsMCOXHbIrBVMKNVUkAuQyF/lyNgPVY3U7DXuYRwe368uzcxKaRoi7Vd1pbObNI/aTXV4dvRKQQPGYuA0="};
+const ENC={"s": "vCmkaldd0fog4l6m5+or3w==", "i": "Y9/6fh0fqmVuaIKH", "n": 250000, "c": "AlJb4KSzA1EnD1gVhHiqroD60tqy+hoLD1C0T7KJkZoLerqpNmYHXRU/iZ7RW4h7aFRAi3YiVMTF5Ik7qiCJetmsHrPNj7fnAb/TDvLMw1w/iewoEo74x0aEJ+6QFpS87TC5cRRT4+KsooSjxPBZTGdkaeLMP4orYs5etc2xJ4ZJehGK3nwd8L1PerZs7ELB0FQ="};
 const $=id=>document.getElementById(id);
 const b64=s=>Uint8Array.from(atob(s),c=>c.charCodeAt(0));
 let ENDPOINT="",PENDING=[],LIST=[],KUMI="全員",FIL="未連絡";
